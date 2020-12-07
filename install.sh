@@ -79,7 +79,7 @@ echo "8.устанавливаем VNC клиент/сервер"
 apt-get install x11vnc tigervnc -y > /dev/null 2>&1
 echo  "Введите пароль для подключения VNC"
 cd ~/
-x11vnc -storepasswd /etc/x11vnc.pass
+x11vnc -storepasswd /etc/x11vnc.passwd
 
 touch /lib/systemd/system/x11vnc.service
 echo -e '[Unit]\nDescription=Start x11vnc at startup.\nAfter=multi-user.target\n[Service]\nType=simple\nExecStart=/usr/bin/x11vnc -rfbauth /etc/x11vnc.passwd -many -display :0 -no6 -rfbport 5901 -auth /var/run/lightdm/root/:0\n[Install]\nWantedBy=multi-user.target' >> /lib/systemd/system/x11vnc.service
