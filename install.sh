@@ -7,6 +7,8 @@ read -p "Нажмите Enter для добавления репозитория
 echo "1.добавление репозиториев ФСТЭК с8.1 и обновление системы"
 apt-repo rm all
 apt-repo add http://mirror.yandex.ru/altlinux/c8.1/branch/
+## Добавим репозиторий I586 для Wine
+echo "rpm http://mirror.yandex.ru/altlinux c8.1/branch/x86_64-i586 classic" >> /etc/apt/sources.list
 apt-get update -y  > /dev/null 2>&1
 apt-get upgrade -y  > /dev/null 2>&1
 
@@ -14,7 +16,7 @@ read -p "готово. нажмите Enter если хотите установ
 
 echo "2.Установка Хромиум-Гост и других необходимых пакетов"
 
-apt-get install nano git chromium-gost eepm wine xfce4-default libxml2 libstdc++6 libgcrypt20 libgcrypt-devel libzstd libglade libglade-devel libncurses
+apt-get install nano sane xsane git chromium-gost eepm i586-wine winetricks xfce4-default libxml2 libstdc++6 libgcrypt20 libgcrypt-devel libzstd libglade libglade-devel libncurses
 jbig-utils libjbig-devel -y > /dev/null 2>&1
 
 read -p "готово. нажмите Enter если хотите установить тему интерфейса"
@@ -79,7 +81,7 @@ echo "8.устанавливаем VNC клиент/сервер"
 apt-get install x11vnc tigervnc -y > /dev/null 2>&1
 echo  "Введите пароль для подключения VNC"
 cd ~/
-x11vnc -storepasswd /etc/x11vnc.passwd
+x11vnc -storepasswd /etc/x11vnc.pass
 
 touch /lib/systemd/system/x11vnc.service
 echo -e '[Unit]\nDescription=Start x11vnc at startup.\nAfter=multi-user.target\n[Service]\nType=simple\nExecStart=/usr/bin/x11vnc -rfbauth /etc/x11vnc.passwd -many -display :0 -no6 -rfbport 5901 -auth /var/run/lightdm/root/:0\n[Install]\nWantedBy=multi-user.target' >> /lib/systemd/system/x11vnc.service
@@ -98,6 +100,13 @@ service sshd enable
 service sshd start
 
 read -p "Нажмите Enter если желаете обновить дистрибутив и ядро"
-apt-get update && apt-get install apt rpm && apt-get dist-upgrade && update-kernel
+apt-get update && apt-
 
-echo "продолжение следует"
+read -p "Нажмите Enter если желаете установить Консультант Плюс"
+echo "Введите сетевой пусть до папки Консультант Плюс. Напимер //10.0.0.10/cons"
+mkdir /home/$username/veda
+read consdisk
+mount -t cifs //$consdisk /home/$username/veda -o user=$netuser,password=$netpass,uid=500,gid=500
+echo "//$consdisk /home/$username/veda cifs username=$netuser,passwd=$netpass,uid=500,gid=500 0 0" >> /etc/fstab
+
+echo "Для запуска Консультант Плюс от обычного пользователя выполните команду winetricks corefonts \n Затем выполните команду winecfg и перейдите во вкладку Диски. Добавьте новый диск и укажите на расположение каталога veda в домашней директории \n После чего перейдите cd ~/.wine/dosdevices/k\: (где к буква вашего сетевого диска) и выполните команду wine cons.exe /LINUX \n После этого в свойствах ярлыка на рабочем столе добавьте флаг /LINUX \n продолжение следует"
